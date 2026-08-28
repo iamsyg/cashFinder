@@ -1,4 +1,4 @@
-# backed/app/models/models.py
+# backend/app/models/models.py
 
 import enum
 from datetime import datetime, timezone
@@ -20,6 +20,10 @@ class TransactionStatus(str, enum.Enum):
     SUCCESS = "SUCCESS"
     FAILED = "FAILED"
 
+class TransactionType(str, enum.Enum):
+    WITHDRAWAL = "WITHDRAWAL"
+    DEPOSIT = "DEPOSIT"
+
 class CashPoint(Base):
     __tablename__ = "cash_points"
 
@@ -31,6 +35,10 @@ class CashPoint(Base):
     longitude = Column(Float, nullable=False)
     standard_float_limit = Column(Float, default=50000.0)  # Total cash capacity in INR
     current_cash_balance = Column(Float, default=50000.0)  # Current available cash in INR
+    total_cash_withdrawn = Column(Float, default=0.0)     # Lifetime cumulative withdrawals
+    total_cash_deposited = Column(Float, default=0.0)     # Lifetime cumulative deposits
+    last_refilled_amount = Column(Float, default=50000.0)  # Amount added during last refill
+    last_refilled_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))  # Timestamp of last refill
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
@@ -59,6 +67,7 @@ class Transaction(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     cash_point_id = Column(Integer, ForeignKey("cash_points.id"), nullable=False)
+    type = Column(SQLEnum(TransactionType), default=TransactionType.WITHDRAWAL)
     amount_requested = Column(Float, nullable=False)
     status = Column(SQLEnum(TransactionStatus), default=TransactionStatus.PENDING)
     upi_ref = Column(String, nullable=True, unique=True)
