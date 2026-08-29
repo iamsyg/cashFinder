@@ -19,14 +19,16 @@ def process_withdrawal(db: Session, cash_point_id: int, amount: float, upi_ref: 
     if not cash_point.is_active:
         raise ValueError("Cash point is currently inactive")
 
+    # Create failed transaction record
+    now = datetime.now(timezone.utc)
     if cash_point.current_cash_balance < amount:
-        # Create failed transaction record
         tx = Transaction(
             cash_point_id=cash_point_id,
             type=TransactionType.WITHDRAWAL,
             amount_requested=amount,
             status=TransactionStatus.FAILED,
-            upi_ref=upi_ref
+            upi_ref=upi_ref,
+            timestamp=now
         )
         db.add(tx)
         
@@ -34,7 +36,8 @@ def process_withdrawal(db: Session, cash_point_id: int, amount: float, upi_ref: 
             cash_point_id=cash_point_id,
             status=PingStatus.OUT_OF_CASH,
             amount_withdrawn=None,
-            note="Insufficient balance for withdrawal"
+            note="Insufficient balance for withdrawal",
+            timestamp=now
         )
         db.add(ping)
         db.commit()
@@ -50,7 +53,8 @@ def process_withdrawal(db: Session, cash_point_id: int, amount: float, upi_ref: 
         type=TransactionType.WITHDRAWAL,
         amount_requested=amount,
         status=TransactionStatus.SUCCESS,
-        upi_ref=upi_ref
+        upi_ref=upi_ref,
+        timestamp=now
     )
     db.add(tx)
 
@@ -59,7 +63,8 @@ def process_withdrawal(db: Session, cash_point_id: int, amount: float, upi_ref: 
         cash_point_id=cash_point_id,
         status=PingStatus.GOT_CASH,
         amount_withdrawn=amount,
-        note="Withdrawal successful"
+        note="Withdrawal successful",
+        timestamp=now
     )
     db.add(ping)
 
@@ -75,6 +80,7 @@ def process_deposit(db: Session, cash_point_id: int, amount: float, upi_ref: str
     2. Increases current_cash_balance and total_cash_deposited.
     3. Logs a DEPOSIT transaction record.
     """
+    now = datetime.now(timezone.utc)
     if amount <= 0:
         raise ValueError("Deposit amount must be positive")
 
@@ -96,7 +102,8 @@ def process_deposit(db: Session, cash_point_id: int, amount: float, upi_ref: str
         type=TransactionType.DEPOSIT,
         amount_requested=amount,
         status=TransactionStatus.SUCCESS,
-        upi_ref=upi_ref
+        upi_ref=upi_ref,
+        timestamp=now
     )
     db.add(tx)
 
@@ -104,7 +111,8 @@ def process_deposit(db: Session, cash_point_id: int, amount: float, upi_ref: str
         cash_point_id=cash_point_id,
         status=PingStatus.GOT_CASH,
         amount_withdrawn=None,
-        note=f"Deposited/Added cash: INR {amount}"
+        note=f"Deposited/Added cash: INR {amount}",
+        timestamp=now
     )
     db.add(ping)
 

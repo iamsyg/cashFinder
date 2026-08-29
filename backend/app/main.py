@@ -1,7 +1,7 @@
 # backend/app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import cashpoints
+from app.api import cashpoints, telemetry, upi
 from app.seed_data import seed_database
 
 app = FastAPI(title="cashFinder API", version="0.1.0")
@@ -19,6 +19,8 @@ app.add_middleware(
 )
 
 app.include_router(cashpoints.router)
+app.include_router(telemetry.router)
+app.include_router(upi.router)
 
 @app.get("/")
 def read_root():
