@@ -42,6 +42,47 @@ WITHDRAWAL_OPTIONS = np.array([500.0, 1000.0, 2000.0, 5000.0, 10000.0])
 WITHDRAWAL_PROBS = [0.2, 0.3, 0.3, 0.15, 0.05]
 
 
+def low_float_friction_prob(capacity_ratio: float, burn_rate: float, hours_since_refill: float, net_signal: float) -> float:
+    """
+    Real ATMs fail in ways that plain "balance >= requested amount"
+    accounting doesn't capture: mechanical jams, note-denomination
+    mismatches (only INR 100 notes left when someone wants INR 2000 in
+    INR 500s), and concurrent depletion by other users between the moment
+    we predict and the moment they walk up. These get sharply more likely
+    as the float runs low.
+
+    The `success_status` column in the raw CSV was generated independently
+    of our simulated balance state, so it carries essentially no real
+    signal correlating with low capacity (verified: conditional on balance
+    covering the ask, the recorded success rate is ~95-99% at EVERY
+    capacity level, including the lowest). Without this function, the
+    label reduces to a deterministic "balance >= ask" threshold and the
+    model never learns that a near-empty float is riskier -- which is
+    exactly the failure mode of the previous version of this script.
+
+    This function is the explicit, documented injection of that domain
+    knowledge into the label. Tune the thresholds/probabilities below if
+    real stockout-rate data becomes available.
+    """
+    if capacity_ratio <= 0.05:
+        risk = 0.55
+    elif capacity_ratio <= 0.15:
+        risk = 0.30
+    elif capacity_ratio <= 0.30:
+        risk = 0.10
+    else:
+        risk = 0.0
+
+    if net_signal < 0:
+        risk += 0.15  # recent crowd-reported failures compound low-float risk
+    if burn_rate >= 3000:
+        risk += 0.10  # fast concurrent depletion
+    if hours_since_refill >= 16:
+        risk += 0.05  # stale float, more time for denomination mismatch to bite
+
+    return min(0.85, risk)
+
+
 def simulate_and_engineer(raw_df: pd.DataFrame) -> pd.DataFrame:
     """
     One chronological pass per ATM that:
@@ -86,7 +127,15 @@ def simulate_and_engineer(raw_df: pd.DataFrame) -> pd.DataFrame:
                 hrs_since_refill = 0.0
 
             success_count_6h_prior = float(sum(success_hist_6h))
-            fail_count_1h_prior = 1.0 if (len(success_hist_6h) > 0 and success_hist_6h[-1] == 0) else 0.0
+            # Count failures in the trailing ~2 hours of history (not just
+            # the single immediately-preceding hour). A strict 1-hour/1-flag
+            # version only ever produces 0 or 1, so net_signal could never
+            # go below -2 in training -- but live crowdsourced pings can
+            # easily report 2+ failures in a short window, and we want the
+            # model to have actually seen that region instead of
+            # extrapolating blind on it at inference time.
+            recent_2 = list(success_hist_6h)[-2:]
+            fail_count_1h_prior = float(sum(1 for s in recent_2 if s == 0))
             withdrawn_prior_2h = float(sum(withdrawn_hist_2h))
 
             feature_row = build_feature_row(
@@ -111,11 +160,27 @@ def simulate_and_engineer(raw_df: pd.DataFrame) -> pd.DataFrame:
             feature_row["atm_id"] = atm_id
             rows.append(feature_row)
 
-            # Label: the REAL recorded outcome must be a success AND the
-            # simulated balance must cover the simulated requested amount.
-            # A recorded failure (success_status == 0) always forces
+            # Label, step 1: the REAL recorded outcome must be a success AND
+            # the simulated balance must cover the simulated requested
+            # amount. A recorded failure (success_status == 0) always forces
             # label = 0, regardless of the synthetic balance/amount.
-            label = 1 if (row["success_status"] == 1 and current_bal >= row["requested_amount"]) else 0
+            base_label = 1 if (row["success_status"] == 1 and current_bal >= row["requested_amount"]) else 0
+
+            # Label, step 2: inject real-world low-float operational risk
+            # (see low_float_friction_prob docstring for why this is
+            # necessary). Only applies when step 1 said "success" -- it can
+            # only turn a success into a failure, never the reverse.
+            if base_label == 1:
+                friction = low_float_friction_prob(
+                    capacity_ratio=feature_row["capacity_ratio"],
+                    burn_rate=feature_row["burn_rate"],
+                    hours_since_refill=feature_row["hours_since_refill"],
+                    net_signal=feature_row["net_signal"],
+                )
+                if rng.random() < friction:
+                    base_label = 0
+
+            label = base_label
             labels.append(label)
 
             # Advance state using this row's real, now-known outcome. This

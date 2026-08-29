@@ -119,7 +119,7 @@ def calculate_cash_probability(
             # ping dataset is available, retrain on raw counts instead of
             # this proxy and drop the clipping.
             success_count_6h_prior = min(6, pos_pings_count)
-            fail_count_1h_prior = min(1, fail_pings_count)
+            fail_count_1h_prior = min(2, fail_pings_count)
 
             feature_row = build_feature_row(
                 current_cash_balance=cash_point.current_cash_balance,
