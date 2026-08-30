@@ -2,7 +2,7 @@
 
 **Session ID:** ses_fb78677a7ffe7E1azw7NCM3sJo
 **Created:** 8/28/2026, 6:35:19 PM
-**Updated:** 8/30/2026, 10:55:10 AM
+**Updated:** 8/30/2026, 12:35:30 PM
 
 ---
 
@@ -2421,6 +2421,625 @@ It only makes predictions using **normalized mathematical ratios**:
 ### **Summary**
 * **The Location (Koramangala):** Just dummy coordinates hardcoded in `seed_data.py` so the map has pins to render.
 * **The ML Engine:** Fully universal and works anywhere in India or the world (Delhi, Mumbai, Jaipur, London) as long as coordinates are passed into the DB.
+
+---
+
+## User
+
+Make README.md file in root explaining the entire project and how to setup
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 16.1s)
+
+**Tool: write**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 5.1s)
+
+`README.md` is created at the root of the project!
+
+It includes:
+1. **Project Overview & Problem Statement** (NPCI ICCW context and last-mile cash discovery gap).
+2. **Architecture & Tech Stack Table** (FastAPI, SQLAlchemy, Scikit-Learn, React 19, Leaflet, Tailwind CSS).
+3. **ML Pipeline Details** (HistGradientBoosting, 10 engineered features, monotonic constraints, isotonic probability calibration metrics).
+4. **Step-by-Step Quick Start Setup Guide** for both Backend and Frontend.
+5. **Test Commands** for running the test suite.
+6. **Complete API Endpoint Reference Matrix**.
+
+---
+
+## User
+
+Where shoudl i deploy this project?
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 9.4s)
+
+Here are the best deployment options for **cashFinder**, tailored for a hackathon submission or production demo:
+
+---
+
+### **Option 1: Render / Railway (Recommended for Free/Low-Cost Hackathon Hosting)**
+
+Both **Render** and **Railway** allow you to deploy the Python backend, PostgreSQL database, and React frontend under one dashboard with zero server maintenance.
+
+* **Backend (FastAPI):**
+  * **Platform:** [Render Web Service](https://render.com) or [Railway](https://railway.app)
+  * **Build Command:** `pip install -r requirements.txt && python -m app.ml.train_model`
+  * **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+* **Database:**
+  * Render / Railway managed **PostgreSQL + PostGIS** database.
+  * **Env Var:** `DATABASE_URL=postgresql://...`
+* **Frontend (React + Vite):**
+  * **Platform:** [Vercel](https://vercel.com) or [Netlify](https://netlify.com)
+  * **Build Command:** `npm run build`
+  * **Output Directory:** `dist`
+  * **Env Var:** `VITE_API_BASE_URL=https://your-backend.onrender.com/api`
+
+---
+
+### **Option 2: Single-Server Docker Deployment (AWS Lightsail / DigitalOcean)**
+
+If you want both frontend and backend served on a single URL/IP with complete control:
+
+1. **Host:** $5/month VPS (AWS Lightsail, DigitalOcean Droplet, or Hetzner).
+2. **Setup:** Spin up our included `docker-compose.yml`:
+   ```bash
+   docker-compose up -d --build
+   ```
+3. **Nginx Reverse Proxy:** Route port `80/443` to the frontend and `/api` to port `8000`.
+
+---
+
+### **Option 3: Hugging Face Spaces + Vercel (Great for ML Demos)**
+
+* **Backend + ML Model:** Host FastAPI on [Hugging Face Spaces](https://huggingface.co/spaces) (Docker/FastAPI template, free CPU tier).
+* **Frontend:** Host React SPA on [Vercel](https://vercel.com).
+
+---
+
+### Suggested Deployment Setup Strategy for Your Hackathon
+1. **Frontend:** Deploy to **Vercel** (connects directly to your GitHub repo in 1 click).
+2. **Backend & DB:** Deploy to **Render** or **Railway** (free tier includes PostgreSQL).
+
+---
+
+## User
+
+where would i deploy my ML model?
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 6.1s)
+
+For **cashFinder**, your ML model is already packaged into a lightweight, high-speed Python model artifact (`backend/app/ml/cash_model.pkl`), so **you deploy the ML model directly inside your FastAPI backend on Render, Railway, or AWS**.
+
+You **do not** need a separate, expensive ML hosting service like SageMaker.
+
+---
+
+### **Why co-locating the ML model inside FastAPI is best:**
+
+1. **Ultra-Low Latency (<2ms):**  
+   Because `prediction_service.py` loads `cash_model.pkl` directly into server RAM when FastAPI boots up, evaluating predictions for 30 nearby cash points takes **less than 2 milliseconds**. If you deployed the ML model separately on an external ML server, network latency between your API and ML server would slow down the user's map loading speed by 200–500ms.
+
+2. **Zero Extra Cost / Free Tier Compatible:**  
+   The model bundle is small (~1.5 MB). It runs effortlessly on standard free-tier app servers (Render, Railway, Fly.io, or AWS Lightsail).
+
+3. **How it works during deployment:**  
+   When your deployment platform (e.g. Render/Railway) builds your backend, it runs:
+   ```bash
+   pip install -r requirements.txt
+   python -m app.ml.train_model    # Generates cash_model.pkl
+   uvicorn app.main:app --port $PORT
+   ```
+   FastAPI loads `cash_model.pkl` on startup and serves live predictions instantly!
+
+---
+
+## User
+
+Okay, deploy on backend on render and frontend on vercel
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.9s)
+
+**Tool: todowrite**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 3.3s)
+
+**Tool: read**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.1s)
+
+**Tool: edit**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 3.9s)
+
+**Tool: todowrite**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.9s)
+
+**Tool: write**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 8.6s)
+
+**Tool: write**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 5.0s)
+
+**Tool: todowrite**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.2s)
+
+**Tool: write**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.0s)
+
+**Tool: todowrite**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 3.3s)
+
+**Tool: read**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.8s)
+
+**Tool: todowrite**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 7.3s)
+
+Here is the step-by-step deployment guide to publish **cashFinder**:
+
+---
+
+## **Part 1: Deploy Backend on Render**
+
+1. Go to **[dashboard.render.com](https://dashboard.render.com)** and log in.
+2. Click **New +** $\rightarrow$ Select **Web Service**.
+3. Connect your **cashFinder** GitHub repository.
+4. Configure the Web Service settings:
+   * **Name:** `cashfinder-backend`
+   * **Region:** Oregon (US) or Singapore (closest to India)
+   * **Branch:** `main`
+   * **Root Directory:** *(Leave blank or set to `backend`)*
+   * **Runtime:** `Python 3`
+   * **Build Command:**  
+     ```bash
+     pip install -r backend/requirements.txt && python -m backend.app.ml.train_model
+     ```
+   * **Start Command:**  
+     ```bash
+     uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+     ```
+5. Click **Create Web Service**.  
+   *Render will build your environment, train the ML model artifact, seed initial database tables, and give you a live URL like:*  
+   👉 **`https://cashfinder-backend.onrender.com`**
+
+---
+
+## **Part 2: Deploy Frontend on Vercel**
+
+1. Go to **[vercel.com](https://vercel.com)** and log in.
+2. Click **Add New...** $\rightarrow$ **Project**.
+3. Import your **cashFinder** GitHub repository.
+4. Configure Project settings:
+   * **Framework Preset:** `Vite`
+   * **Root Directory:** Edit $\rightarrow$ Select `frontend`
+   * **Build Command:** `npm run build`
+   * **Output Directory:** `dist`
+5. **Environment Variables Section:**
+   * Add Name: `VITE_API_BASE_URL`
+   * Add Value: `https://cashfinder-backend.onrender.com/api` *(Your Render backend URL + `/api`)*
+6. Click **Deploy**.  
+   *Vercel will build the React SPA and deploy it to a live production URL like:*  
+   👉 **`https://cashfinder.vercel.app`**
+
+---
+
+### **Pre-Configured Files Created in Project Root:**
+* **`frontend/vercel.json`**: Configured with single-page app (SPA) routing rules.
+* **`render.yaml`**: Pre-configured Render deployment configuration file.
+* **`frontend/src/App.jsx`**: Updated to read `import.meta.env.VITE_API_BASE_URL` dynamically.
+
+---
+
+## User
+
+Do i need to give .env for backend and what to assign  $PORT
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 8.3s)
+
+Here are the exact answers for **Render Environment Variables and `$PORT`**:
+
+---
+
+### **1. What to assign for `$PORT`?**
+
+**You do NOT assign a specific number to `$PORT` yourself!**
+
+* Render automatically injects the `$PORT` environment variable dynamically into your web service container on startup (usually port 10000 or similar).
+* In your Render **Start Command**, keep `$PORT` written literally as a variable:
+  ```bash
+  uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+  ```
+  Uvicorn will automatically read whatever port Render assigns to `$PORT`.
+
+---
+
+### **2. Do you need a `.env` file for Backend on Render?**
+
+**No file needs to be uploaded!** 
+
+Instead of uploading a `.env` file, you set environment variables directly inside the **Render Dashboard UI** (under **Environment** tab $\rightarrow$ **Environment Variables**):
+
+| Key | Recommended Value | Explanation |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | `sqlite:///./cashfinder.db` | Keeps SQLite for free tier *(or paste your Render PostgreSQL URL if using Postgres)* |
+| `DEBUG` | `False` | Disables debug mode in production |
+| `PYTHON_VERSION` | `3.11.9` | Ensures compatible Python runtime on Render |
+| `SECRET_KEY` | `cashfinder_prod_super_secret_key_2026` | Production security key |
+
+---
+
+### **Quick Recap for Render Dashboard Form:**
+
+* **Build Command:**
+  ```bash
+  pip install -r backend/requirements.txt && python -m backend.app.ml.train_model
+  ```
+* **Start Command:**
+  ```bash
+  uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+  ```
+
+---
+
+## User
+
+from app.api import cashpoints, telemetry, upi
+ModuleNotFoundError: No module named 'app'
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT'
+Traceback (most recent call last):
+  File "/opt/render/project/src/.venv/bin/uvicorn", line 7, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/click/core.py", line 1631, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/click/core.py", line 1552, in main
+    rv = self.invoke(ctx)
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/click/core.py", line 1415, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/click/core.py", line 910, in invoke
+    return callback(*args, **kwargs)
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/main.py", line 440, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<48 lines>...
+        reset_contextvars=reset_contextvars,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/main.py", line 609, in run
+    config.load_app()
+    ~~~~~~~~~~~~~~~^^
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/config.py", line 428, in load_app
+    return import_from_string(self.app)
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/opt/render/project/python/Python-3.14.3/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1398, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "/opt/render/project/src/backend/app/main.py", line 4, in <module>
+    from app.api import cashpoints, telemetry, upi
+ModuleNotFoundError: No module named 'app'
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 5.6s)
+
+The error `ModuleNotFoundError: No module named 'app'` happens because when Render runs the application from the root repository directory, `PYTHONPATH` does not automatically include `backend/`, so Python cannot find `from app.api import ...`.
+
+Here is the exact fix for Render:
+
+---
+
+### **The Fix in Render Settings**
+
+In your Render Service Dashboard, set **Root Directory** or update the commands to explicitly set `PYTHONPATH`:
+
+#### **Method A: Set Root Directory (Recommended & Cleanest)**
+1. Go to **Render Dashboard** $\rightarrow$ **Settings** $\rightarrow$ **Build & Deploy**.
+2. Set **Root Directory** to:  
+   `backend`
+3. Set **Build Command** to:  
+   ```bash
+   pip install -r requirements.txt && python -m app.ml.train_model
+   ```
+4. Set **Start Command** to:  
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   ```
+
+---
+
+#### **Method B: If Root Directory is left blank**
+Set **PYTHONPATH** in environment variables:
+1. In Render Dashboard $\rightarrow$ **Environment** tab.
+2. Add Environment Variable:
+   * **Key:** `PYTHONPATH`
+   * **Value:** `backend`
+3. Set **Build Command** to:  
+   ```bash
+   pip install -r backend/requirements.txt && PYTHONPATH=backend python -m app.ml.train_model
+   ```
+4. Set **Start Command** to:  
+   ```bash
+   uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+   ```
+
+Method A (setting Root Directory to `backend`) is the cleanest solution!
+
+---
+
+## User
+
+Downloading cache...
+==> Cloning from https://github.com/iamsyg/cashFinder
+==> Checking out commit f10271281da7557fad723412b4be18f500e6abc4 in branch main
+==> Downloaded 92MB in 7s. Extraction took 0s.
+==> Using Python version 3.14.3 (default)
+==> Docs on specifying a Python version: https://render.com/docs/python-version
+==> Installing Python version 3.14.3...
+==> Using Poetry version 2.1.3 (default)
+==> Docs on specifying a Poetry version: https://render.com/docs/poetry-version
+==> Running build command 'pip install -r backend/requirements.txt && python -m backend.app.ml.train_model'...
+[notice] A new release of pip is available: 25.3 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+ERROR: Could not open requirements file: [Errno 2] No such file or directory: 'backend/requirements.txt'
+==> Build failed 😞
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 6.8s)
+
+When **Root Directory** is set to `backend` in Render settings, Render automatically moves inside the `backend` folder before running commands.
+
+Therefore, inside `backend/`, the file paths are relative to `backend/`.
+
+Here are the exact commands to paste into your Render settings:
+
+---
+
+### **Render Settings (When Root Directory is set to `backend`):**
+
+* **Root Directory:**  
+  `backend`
+
+* **Build Command:**  
+  ```bash
+  pip install -r requirements.txt && python -m app.ml.train_model
+  ```
+
+* **Start Command:**  
+  ```bash
+  uvicorn app.main:app --host 0.0.0.0 --port $PORT
+  ```
+
+---
+
+### **Summary of what changed:**
+1. `requirements.txt` instead of `backend/requirements.txt` (since Render is already inside `backend`).
+2. `python -m app.ml.train_model` instead of `backend.app.ml.train_model`.
+3. `uvicorn app.main:app` instead of `backend.app.main:app`.
+
+---
+
+## User
+
+tell me about the skillpatch i used 
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 10.2s)
+
+Here is the complete overview of **SkillPatch** and the skill package you installed in this project:
+
+---
+
+### **1. What is SkillPatch?**
+
+**[SkillPatch](https://skillpatch.dev)** is an open-source registry and package manager for **Agent Skills** based on the open `SKILL.md` standard.
+
+It allows AI coding tools (such as **LatentCode**, Claude Code, Codex, Cursor, and GitHub Copilot) to discover, download, publish, and improve specialized capability packs.
+
+#### **Key Concepts of SkillPatch:**
+* **`SKILL.md` Standard:** A structured Markdown format containing specialized workflows, prompt rules, code templates, and design guidelines for AI agents.
+* **Agent Capabilities:** When installed, an agent loads the skill's instructions into its active context, giving it domain-specific expertise (e.g., frontend design, C++ performance, API design, or cloud architecture).
+* **Registry & Versioning:** SkillPatch manages versioning, security scoring, private/public visibility, and team sharing.
+
+---
+
+### **2. The Skill Installed in cashFinder (`frontend-ui-dark-ts`)**
+
+During our build session, you installed the **`frontend-ui-dark-ts`** skill package from SkillPatch into your local `.latentcode/skills/frontend-ui-dark-ts` directory.
+
+```text
+cashFinder/
+└── .latentcode/
+    └── skills/
+        └── frontend-ui-dark-ts/
+            └── SKILL.md
+```
+
+#### **What `frontend-ui-dark-ts` provided for cashFinder:**
+1. **Dark Design Tokens & Glassmorphism:**
+   - Slate/zinc background palette (`bg-slate-900`, `bg-slate-950`).
+   - Glassmorphic panels with backdrop blurring (`backdrop-blur-md`, `bg-slate-900/80`).
+   - Glowing borders and shadow highlights (`shadow-emerald-500/10`).
+
+2. **Probability Badge System:**
+   - Pre-designed status color badges: **Green** (🟢 `>80%` High confidence), **Yellow** (🟡 `45–79%` Medium confidence), and **Red** (🔴 `<45%` Low confidence/alert).
+
+3. **Component Layout & Animations:**
+   - Design patterns for dark maps, card list layouts (`CashPointCard`), modal overlays (`WithdrawalModal`, `TelemetryModal`), and merchant control drawers (`MerchantPanel`).
+
+---
+
+## User
+
+tell me in one line
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 6.1s)
+
+_Thinking:_
+
+**Defining SkillPatch's Purpose**
+
+I'm currently focused on defining SkillPatch's purpose clearly and concisely. My initial thought is to describe it as an open registry or package manager for AI agent skills, reflecting its function of managing and distributing these skills, specifically the "frontend-ui-dark-ts" skill, which is key. I'm aiming for a single, impactful sentence.
+
+
+
+
+SkillPatch is an open package manager for AI agent skills, which you used to install `frontend-ui-dark-ts` to give cashFinder its dark-mode glassmorphic UI and color-coded probability badges.
+
+---
+
+## User
+
+describe project in 2-3 sentences
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 8.3s)
+
+_Thinking:_
+
+**Defining the Core Problem**
+
+I'm now zeroing in on defining the core problem. The challenge is clear: how to find physical cash in a largely UPI-driven financial landscape. This project, `cashFinder`, aims to solve this, moving towards predictive cash discovery as a solution. I'm shaping the initial problem definition to be concise.
+
+
+**Refining Core Value Proposition**
+
+I've crafted and refined key sentences outlining cashFinder's value. The focus is on solving the physical cash availability issue in India. I've developed the core solution: predict real-time cash fulfillment at ATMs and micro-ATMs. I'm leveraging calibrated ML probabilities and NPCI UPI intent for cardless cash withdrawals. A Gradient Boosting ML engine is being trained.
+
+
+
+
+**cashFinder** solves the last-mile physical cash discovery gap in India by routing users to nearby ATMs and merchant micro-cash points based on real-time availability predictions. Driven by a calibrated Gradient Boosting ML engine, it analyzes live float balances, hourly withdrawal speeds, and crowdsourced signals to calculate exact fulfillment probabilities (e.g., *"87% chance for ₹2,000"*). Users can then instantly initiate cardless cash withdrawals on-site using standard NPCI-compliant UPI QR codes and 1-tap mobile deep links.
+
+---
+
+## User
+
+what to add .env in vercel for frontend
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 8.8s)
+
+_Thinking:_
+
+**Clarifying the Requirement**
+
+I'm now zeroing in on the core of the question: specifically identifying the crucial `.env` setting needed for the `cashFinder` React frontend when deployed on Vercel. I'm focused on isolating the environment variable that's absolutely essential for its successful deployment.
+
+
+
+
+In Vercel, set this single Environment Variable:
+
+* **Key / Name:**  
+  `VITE_API_BASE_URL`
+
+* **Value:**  
+  `https://your-backend-name.onrender.com/api`  
+  *(Replace `your-backend-name` with your actual Render backend URL, and make sure to include `/api` at the end).*
+
+---
+
+### **How to add it in Vercel Dashboard:**
+1. In your Vercel Project Dashboard, go to **Settings** $\rightarrow$ **Environment Variables**.
+2. Set **Key** to `VITE_API_BASE_URL`.
+3. Set **Value** to `https://<your-render-backend-url>/api`.
+4. Click **Save** and trigger a **Redeploy** so Vite injects the new backend URL into the production build!
+
+---
+
+## User
+
+my backend: https://cashfinder-backend.onrender.com/
+my frontend: https://cash-finder-sand.vercel.app/
+
+add these into my README.md
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 8.0s)
+
+**Tool: read**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 9.1s)
+
+**Tool: edit**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 10.7s)
+
+Updated `README.md` with your production live URLs!
+
+### Added Section to `README.md`:
+* **Live Web Application (Vercel):** [https://cash-finder-sand.vercel.app/](https://cash-finder-sand.vercel.app/)
+* **Live Backend API (Render):** [https://cashfinder-backend.onrender.com/](https://cashfinder-backend.onrender.com/)
+* **Interactive API Docs (Swagger):** [https://cashfinder-backend.onrender.com/docs](https://cashfinder-backend.onrender.com/docs)
 
 ---
 

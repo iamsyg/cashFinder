@@ -10,7 +10,7 @@ import WithdrawalModal from './components/WithdrawalModal'
 import TelemetryModal from './components/TelemetryModal'
 import MerchantPanel from './components/MerchantPanel'
 
-const API_BASE_URL = 'http://localhost:8000/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
 
 // Default Koramangala, Bangalore GPS coordinates
 const DEFAULT_USER_LOCATION = { lat: 12.9352, lng: 77.6245 }
