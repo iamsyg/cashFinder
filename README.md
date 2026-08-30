@@ -20,6 +20,8 @@ While UPI has revolutionized digital payments in India, finding **available phys
 3. **Crowdsourced Telemetry:** Accepts live user reports (`GOT_CASH`, `OUT_OF_CASH`, `MACHINE_BROKEN`) that dynamically update ML signals in real time.
 4. **Double-Entry Merchant Float Management:** Provides a Merchant Panel for local shopkeepers to deposit incoming customer cash float or reset float limits.
 
+![alt text](images/image.png)
+
 ---
 
 ## 🏗️ Architecture & Tech Stack
@@ -34,6 +36,15 @@ While UPI has revolutionized digital payments in India, finding **available phys
 * **Framework:** **React 19** + **Vite**.
 * **Design System:** Installed **`frontend-ui-dark-ts`** (Tailwind CSS, Lucide Icons, Glassmorphism, Probability Badges: 🟢 >80%, 🟡 45-79%, 🔴 <45%).
 * **Map Engine:** **React-Leaflet** + **OpenStreetMap** dark tiles (`tile.openstreetmap.org`) — *Zero API keys required*.
+
+### **Geospatial Proximity Calculation (Haversine Distance)**
+The API uses the **Haversine formula** (`calculate_haversine_distance`) to compute the exact great-circle distance in kilometers between the user's GPS coordinates $(\text{lat}_1, \text{lng}_1)$ and each physical cash point $(\text{lat}_2, \text{lng}_2)$ on the spherical Earth surface:
+
+$$a = \sin^2\left(\frac{\Delta\text{lat}}{2}\right) + \cos(\text{lat}_1) \cdot \cos(\text{lat}_2) \cdot \sin^2\left(\frac{\Delta\text{lng}}{2}\right)$$
+
+$$c = 2 \cdot \text{atan2}\left(\sqrt{a}, \sqrt{1-a}\right), \quad d = R \cdot c \quad (R = 6371 \text{ km})$$
+
+This allows filtering cash points within a specified radius (e.g., $10\text{ km}$) and sorting search results by **Highest ML Probability Score** and **Closest Distance**.
 
 ---
 

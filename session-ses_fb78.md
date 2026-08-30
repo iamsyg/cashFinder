@@ -2,7 +2,7 @@
 
 **Session ID:** ses_fb78677a7ffe7E1azw7NCM3sJo
 **Created:** 8/28/2026, 6:35:19 PM
-**Updated:** 8/30/2026, 12:35:30 PM
+**Updated:** 8/30/2026, 1:05:10 PM
 
 ---
 
@@ -3040,6 +3040,33 @@ Updated `README.md` with your production live URLs!
 * **Live Web Application (Vercel):** [https://cash-finder-sand.vercel.app/](https://cash-finder-sand.vercel.app/)
 * **Live Backend API (Render):** [https://cashfinder-backend.onrender.com/](https://cashfinder-backend.onrender.com/)
 * **Interactive API Docs (Swagger):** [https://cashfinder-backend.onrender.com/docs](https://cashfinder-backend.onrender.com/docs)
+
+---
+
+## User
+
+Also add about haverion distance in README 
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 6.7s)
+
+**Tool: read**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 7.0s)
+
+**Tool: edit**
+
+---
+
+## Assistant (Build · gemini/gemini-3.7-flash · 4.3s)
+
+Updated `README.md` to include a dedicated section on the **Haversine Distance Formula**!
+
+### Added Section:
+* **Geospatial Proximity Calculation (Haversine Distance):** Explains the great-circle spherical trigonometric formula used by `calculate_haversine_distance` in `backend/app/api/cashpoints.py` to filter points by radius and sort results by highest probability and closest distance.
 
 ---
 
